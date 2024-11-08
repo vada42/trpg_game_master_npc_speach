@@ -1,4 +1,4 @@
-<img src="https://capsule-render.vercel.app/api?type=wave&color=auto&height=300&section=header&text=GPT%20NPC_Dialogue_generator&fontSize=30" />
+<img src="https://capsule-render.vercel.app/api?type=wave&color=auto&height=300&section=header&text=GPT%20NPC_Dialogue_generator&fontSize=60" />
 
 # trpg_game_master_npc_speach
 
