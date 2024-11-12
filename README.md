@@ -14,6 +14,7 @@
 <br/>
 <br/>
 <br/>
+
 <img width="844" alt="image" src="https://github.com/user-attachments/assets/5c4f29d6-44da-431a-a819-f0e91828e7d9">
 <br/>
 start_Scenario:새로운 게임 시나리오를 시작하는 엔드포인트<br/>
@@ -42,12 +43,81 @@ scenario_cache 내부
 	mainQuest : 게임 주요목표(승리조건),
 	subQuest : 게임 보조 목표,
 	detail : 전체적인 시나리오 내용,
-	charParts : 시나리오 내 등장인물 +['게임마스터']
-	worldParts : 시나리오 에서 등장하는 장소
-	players : 플레이어
+	charParts : 시나리오 내 등장인물 +['게임마스터'],
+	worldParts : 시나리오 에서 등장하는 장소,
+	players : 플레이어,
 	history : []
 }
 ```
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<img width="787" alt="image" src="https://github.com/user-attachments/assets/11e6b89e-781a-4d6e-b4e9-b421dfbd5838">
+<br/>
+create_NPC_detail:
+npc 와 대화할때 전체 시나리오(detail)을 전부 사용하면 입력 초과가 생길수 있기 때문에 전체 시나리오에서 해당 npc 와 관련된 부분만 따로 추출해서(create_NPC_detail) 사용한다<br/>
+추출후 생성된 char_dic은 scenario_cache 내부에 들어간다
+
+```
+사용자에게 받은 sessionID:{
+	title : 제목,
+	genere : 장르,
+	mainQuest : 게임 주요목표(승리조건),
+	subQuest : 게임 보조 목표,
+	detail : 전체적인 시나리오 내용,
+	charParts : 시나리오 내 등장인물 +['게임마스터'],
+	worldParts : 시나리오 에서 등장하는 장소,
+	players : 플레이어,
+	history : [],
+	char_dic:{
+	왕자 : [왕자_detail_1, 왕자_detail_2,왕자_detail_3,...],
+	마왕 : [마왕_detail_1, 마왕_detail_2,마왕_detail_3,...],
+	상인 : [상인_detail_1, 상인_detail_2,상인_detail_3,...],
+				.
+				.
+				.
+	}
+}
+```
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<img width="766" alt="image" src="https://github.com/user-attachments/assets/1d659166-1c42-4197-9609-f5f2e85a60ff">
+<br/>
+create_end_detail:
+end_dailog 를 실행할때 전체 시나리오를 전부 사용하는 것은 과용이기 때문에 전체 시나리오에서 mainquest 와 subquest가 관련된 부분만 따로 추출해서(create_end_detail) 사용한다<br/>
+추출후 생성된 end_detail scenario_cache 내부에 들어간다
+
+```
+사용자에게 받은 sessionID:{
+	title : 제목,
+	genere : 장르,
+	mainQuest : 게임 주요목표(승리조건),
+	subQuest : 게임 보조 목표,
+	detail : 전체적인 시나리오 내용,
+	charParts : 시나리오 내 등장인물 +['게임마스터'],
+	worldParts : 시나리오 에서 등장하는 장소,
+	players : 플레이어,
+	history : [],
+	char_dic:{
+	왕자 : [왕자_detail_1, 왕자_detail_2,왕자_detail_3,...],
+	마왕 : [마왕_detail_1, 마왕_detail_2,마왕_detail_3,...],
+	상인 : [상인_detail_1, 상인_detail_2,상인_detail_3,...],
+				.
+				.
+				.
+	},
+	end_detail: end_dailog를 실행할때 사용할 detail
+}
+```
+
 <br/>
 <br/>
 <br/>
@@ -90,11 +160,12 @@ analyze_UserMsg: 사용자의 메시지를 해석하는 엔드포인트<br/>
 <br/>
 <br/>
 <br/>
-<img width="851" alt="image" src="https://github.com/user-attachments/assets/770bf133-4dbf-4b6f-85a7-ec218f6b1dbf">
+<img width="781" alt="image" src="https://github.com/user-attachments/assets/31766329-c43e-4877-abfc-9505e4836d43">
 <br/>
 response_Dailog: NPC가 사용자 대사에 대한 답변을 제공하는 엔드포인트<br/>
 플레이어의 대사.행동(userMsg)을 사용자로부터 받는다.<br/>
 현재 장소(location), 대화대상(npcName), 플레이어행적(history)을 talking_cache에서 받아온다.<br/>
+미리 생성했던 char_dic 에서 대화대상(npcName)에 맞는 npc_detail들을 가져온다<br/>
 받아온 정보들을 토대로 npc의 대사를 생성, 반환한다<br/>
 만약 플레이어의 대사.행동(userMsg)이 비어있다면 자동으로 "인사하기" 문구를 저장시킨다.<br/>
 대화대상(npcName)이 '게임마스터'라면 게임마스터와의 대화하고 그렇지 않으면 해당대화대상과 대화한다<br/>
@@ -105,12 +176,13 @@ response_Dailog: NPC가 사용자 대사에 대한 답변을 제공하는 엔드
 <br/>
 <br/>
 <br/>
-<img width="871" alt="image" src="https://github.com/user-attachments/assets/3faf43c2-7fab-49fb-9390-674c38a3548b">
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/1f410ed2-bb1d-403b-89b8-ce9fc81771b7">
 <br/>
 responseDice: 주사위 결과에 따른 NPC 답변을 제공하는 엔드포인트<br/>
 플레이어의 대사.행동(userMsg)을 사용자로부터 받는다.<br/>
 추가로 사용자의 주사위판정결과(diceResult), 주사위보정치(bonus)를 사용자에게 받는다<br/>
 현재 장소(location), 대화대상(npcName), 플레이어행적(history)을 talking_cache에서 받아온다.<br/>
+미리 생성했던 char_dic 에서 대화대상(npcName)에 맞는 npc_detail들을 가져온다<br/>
 받아온 정보들을 토대로 npc의 대사를 생성, 반환한다<br/>
 만약 플레이어의 대사.행동(userMsg)이 비어있다면 자동으로 "인사하기" 문구를 저장시킨다.<br/>
 대화대상(npcName)이 '게임마스터'라면 게임마스터와의 대화하고 그렇지 않으면 해당대화대상과 대화한다<br/>
@@ -121,11 +193,11 @@ responseDice: 주사위 결과에 따른 NPC 답변을 제공하는 엔드포인
 <br/>
 <br/>
 <br/>
-<img width="859" alt="image" src="https://github.com/user-attachments/assets/30da5a14-9beb-4891-b24d-dd239cc68500">
+<img width="889" alt="image" src="https://github.com/user-attachments/assets/6ec377ce-e289-4d66-851f-59fcba2c81cc">
 <br/>
 end_Dailog: 대화를 종료하고 요약을 생성하는 엔드포인트<br/>
 사용자에게서 대화종료신호를 받으면 이제까지의 대화(dialog_history)를 통해 요약본을 만든다.<br/>
-추가로 scenario_cache 안에 있는 mainQuest : 게임 주요목표(승리조건), subQuest : 게임 보조 목표를 받아와서 <br/>
+추가로 scenario_cache 안에 있는 end_detail(end_dailog를 실행할때 사용할 detail), mainQuest(게임 주요목표(승리조건)), subQuest(게임 보조 목표)를 받아와서 <br/>
 목표달성이 됬는지를 판정한다. 요약본이 만들어지고난 후 대화버퍼를 초기화시킨다.<br/>
 <br/>
 <br/>
